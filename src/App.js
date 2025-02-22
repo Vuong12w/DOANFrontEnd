@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import Login from './components/Login/login';
 import Register from './components/Register/Register';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 function App() {
   return (
     <Router>
@@ -37,6 +39,17 @@ function App() {
    </Route>
  </Switch>
    </div>
+   <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+/>
  </Router>
   );
 }

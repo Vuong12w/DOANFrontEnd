@@ -1,10 +1,72 @@
 import './Register.scss'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 const Register =(props)=>{
+  const [email,setEmail]=useState("")
+  const [phone,setPhone]=useState("")
+  const [username,setUsername]=useState("")
+  const [password,setPassword]=useState("")
+  const [confirmPassword,setConfirmPassword]=useState("")
+  const defaultValidInput ={
+    isValidEmail:true,
+    isValidPhone:true,
+    isValidPassword:true,
+    isValidConfirmPassword:true
+  }
+  const [objCheckInput,setObjCheckInput]=useState(defaultValidInput)
   let history =useHistory()
   const handleLogin=()=>{
   history.push("/login")
   }
+  const isValidInput=()=>{
+    setObjCheckInput(defaultValidInput)
+    if(!email){
+      setObjCheckInput({...defaultValidInput,isValidEmail:false})
+      toast.error("Email is required")
+      return false
+    }
+    let regx =/\S+@\S+\.\S+/
+    if(!regx.test(email)){
+      setObjCheckInput({...defaultValidInput,isValidEmail:false})
+      toast.error("please enter a vaild email address")
+      return false
+    }
+    if(!phone){
+      setObjCheckInput({...defaultValidInput,isValidPhone:false})
+      toast.error("Phone is required")
+      return false
+    }
+    if(!password){
+      setObjCheckInput({...defaultValidInput,isValidPassword:false})
+      toast.error("Password is required")
+      return false
+    }
+    if(password != confirmPassword){
+      setObjCheckInput({...defaultValidInput,isValidConfirmPassword:false})
+      toast.error("Your password is not the same")
+      return false
+    }
+   
+    return true
+  }
+  const handleRegister=()=>{
+    let check = isValidInput()
+    if(check===true){
+      axios.post('http://localhost:8080/api/v1/register',{
+        email,phone,username,password
+      })
+    }
+    let userData = {email,phone,username,password}
+    console.log(userData)
+  }
+  
+  useEffect(()=>{
+    // axios.get("http://localhost:8080/api/v1/test-api").then(data=>{{
+    //   console.log(data)
+    // }})
+  },[])
   return(
     <div className="register-container mt-3">
       <div className="container">
@@ -23,25 +85,30 @@ const Register =(props)=>{
              </div>
              <div className='form-group'>
               <label>Email:</label>
-            <input className='form-control' type="text" placeholder='Email address '/>
+            <input className={objCheckInput.isValidEmail?'form-control':'form-control is-invalid'} type="text" placeholder='Email address' 
+            value={email} onChange={(event)=>setEmail(event.target.value)}/>
             </div>
             <div>
               <label> Phone:</label>
-            <input className='form-control' type="text" placeholder='phone number'/>
+            <input className={objCheckInput.isValidPhone?'form-control':'form-control is-invalid'} type="text" placeholder='phone number'
+            value={phone} onChange={(event)=>setPhone(event.target.value)}/>
             </div>
             <div>
               <label> Username:</label>
-            <input className='form-control' type="text" placeholder='Username'/>
+            <input className='form-control' type="text" placeholder='Username'
+            value={username} onChange={(event)=>setUsername(event.target.value)}/>
             </div>
             <div className='form-group'>
               <label>password:</label>
-            <input className='form-control' type="password" placeholder='Password'/>
+            <input className={objCheckInput.isValidPassword?'form-control':'form-control is-invalid'} type="password" placeholder='Password'
+            value={password} onChange={(event)=>setPassword(event.target.value)}/>
             </div>
             <div className='form-group'>
               <label>Re-enter password:</label>
-            <input className='form-control' type="password" placeholder='Password'/>
+            <input className={objCheckInput.isValidConfirmPassword?'form-control':'form-control is-invalid'}type="password" placeholder='Password'
+            value={confirmPassword} onChange={(event)=>setConfirmPassword(event.target.value)}/>
             </div>
-            <button className='btn btn-primary'>Register</button>
+            <button className='btn btn-primary' onClick={()=>handleRegister()}>Register</button>
             <span className='text-center'><a className='forgot-password' href='#'>Forgot your password?</a></span>
             <hr/>
             <div className='text-center'>
