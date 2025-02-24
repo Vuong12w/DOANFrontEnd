@@ -9,4 +9,17 @@ const loginUser =(valueLogin,password)=>{
     valueLogin,password
   })
 }
-export {registerNewUser,loginUser};
+const fetchAllUsers = async (page,limit) => {
+    return axios.get(`http://localhost:8080/api/v1/user/read?page=${page}&limit=${limit}`);
+   
+}
+const deleteUser = async(user)=>{
+  return axios.delete('http://localhost:8080/api/v1/user/delete',{data:{id:user.id}})
+}
+const fetchGroup=()=>{
+  return axios.get('http://localhost:8080/api/v1/group/read')
+}
+const creatNewUser=(userData)=>{
+  return axios.post('http://localhost:8080/api/v1/user/create',{...userData})
+}
+export {registerNewUser,loginUser,fetchAllUsers,deleteUser,fetchGroup,creatNewUser};

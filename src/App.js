@@ -6,53 +6,31 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import Login from './components/Login/login';
-import Register from './components/Register/Register';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
-import Users from './components/ManageUsers/Users';
 import { useEffect, useState } from 'react';
 import _ from "lodash";
+import AppRoutes from './routes/AppRoute';
 function App() {
   const [account,setAccount]=useState({})
   useEffect(()=>{
-   let session = sessionStorage.getItem('account')
+    let session = sessionStorage.getItem('account')
    if(session){
-    setAccount(JSON.parse(session))
+     setAccount(JSON.parse(session))
    }
   },[])
   return (
+    <>
     <Router>
+    <div className='app-header'>
+       <Nav/>
+    </div>
    <div className='app-container'>
-    {account && !_.isEmpty(account) && account.isAuthenticated && <Nav/>}
+    {/* {account && !_.isEmpty(account) && account.isAuthenticated && <Nav/>} */}
     {/* <Nav/> */}
-    <Switch>
-   <Route exact path="/">
-     home
-   </Route>
-   <Route path="/news">
-     news
-   </Route>
-   <Route path="/about">
-     about
-   </Route>
-   <Route path="/contact">
-     contact
-   </Route>
-   <Route path="/login">
-     <Login/>
-   </Route>
-   <Route path="/register">
-     <Register/>
-   </Route>
-   <Route path="/users">
-     <Users/>
-   </Route>
-   <Route path="*">
-     c404 notfound
-   </Route>
- </Switch>
+    <AppRoutes/>
    </div>
+   
    <ToastContainer
 position="top-right"
 autoClose={5000}
@@ -65,6 +43,7 @@ draggable
 pauseOnHover
 />
  </Router>
+  </>
   );
 }
 
