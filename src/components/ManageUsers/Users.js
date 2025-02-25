@@ -22,18 +22,17 @@ const Users =(props)=>{
   const [isShowModalDelete,setIsShowModalDelete]=useState(false)
   const [dataModal,setDataModal]=useState('')
   const [isShowModalUser,setIsShowModalUser]=useState(false)
+  const [actionModalUser,setActionModalUser]=useState("CREATE")
+  const [dataModalUser,setDataModalUser]=useState({})
   useEffect(()=>{
     fetchUsers()
   },[currentPage])
+  
   const fetchUsers=async()=>{
     let response = await fetchAllUsers(currentPage,currentLimit)
-    console.log(response)
-    console.log(response.data.DT.users)
-
-     if(response&&response.data&&response.data.EC===0){
-       console.log('dữ liêu',response.DT)
-       setTotalPages(response.data.DT.totalPages)
-       setListUsers(response.data.DT.users)
+     if(response&&response.EC===0){
+       setTotalPages(response.DT.totalPages)
+       setListUsers(response.DT.users)
     }else{
     }
   }
@@ -44,14 +43,6 @@ const Users =(props)=>{
   const handleDeleteUser=async(user)=>{
     setDataModal(user)
     setIsShowModalDelete(true)
-    // let respone = await deleteUser(user)
-    // console.log(respone)
-    // if(respone && respone.data.EC===0){
-    //   toast.success(respone.data.EM)
-    //   await fetchUsers()
-    // }else{
-    //   toast.error(respone.data.EM)
-    // }
   }
   const handleClose=()=>{
     setIsShowModalDelete(false)
@@ -60,26 +51,38 @@ const Users =(props)=>{
   const confirmDeleteUser=async()=>{
     let respone = await deleteUser(dataModal)
     console.log(respone)
-    if(respone && respone.data.EC===0){
-      toast.success(respone.data.EM)
+    if(respone && respone.EC===0){
+      toast.success(respone.EM)
       await fetchUsers()
       setIsShowModalDelete(false)
     }else{
-      toast.error(respone.data.EM)
+      toast.error(respone.EM)
     }
   }
-  const onhideModalUser=()=>{
+  const onhideModalUser=async()=>{
     setIsShowModalUser(false)
+    setDataModalUser({})
+    await fetchUsers()
+  }
+  const handleEditUser=(user)=>{
+    setActionModalUser("UPDATE")
+    setDataModalUser(user)
+    setIsShowModalUser(true)
+  }
+  const handleRefresh=async()=>{
+    window.location.reload()
+    await fetchUsers()
   }
   return(
     <>
     <div className="container">
     <div className="manage-users-container">
       <div className="user-header">
-         <div className="title"><h3>Table Users</h3></div>
-         <div className="actions">
-          <button className="btn btn-success">Refresh</button>
-          <button className="btn btn-primary" onClick={()=>setIsShowModalUser(true)}>Add new user</button>
+         <div className="title mt-3"><h3>Manage Users</h3></div>
+         <div className="actions my-3">
+          <button className="btn btn-success refresh" onClick={()=>handleRefresh()}> <i className="fa fa-refresh"></i>Refresh</button>
+          <button className="btn btn-primary" onClick={()=>{setIsShowModalUser(true)
+    setActionModalUser("CREATE")}}><i className="fa fa-plus-circle"></i>Add new user</button>
          </div>
       </div>
       <div className="user-body">
@@ -99,16 +102,18 @@ const Users =(props)=>{
     <>{listUsers.map((item,index)=>{
       return(
         <tr key={`row-${index}`}>
-          <td>{index+1}</td>
+          <td>{(currentPage-1)*currentLimit+index+1}</td>
           <td>{item.id}</td>
           <td>{item.email}</td>
           <td>{item.username}</td>
           <td>{item.Group?item.Group.name:''}</td>
           <td>
-            <button className="btn btn-warning mx-3">Edit</button>
+            <button className="btn btn-warning mx-3"
+            onClick={()=>handleEditUser(item)}
+            > <i className="fa fa-pencil"></i>Edit</button>
             <button className="btn btn-danger"
             onClick={()=>handleDeleteUser(item)}
-            >Delete</button>
+            > <i className="fa fa-trash-o"></i>Delete</button>
           </td>
         </tr>
       )
@@ -151,9 +156,11 @@ const Users =(props)=>{
     dataModal={dataModal}
     />
     <ModalUser
-    title='Create new user'
+    
     onhide={onhideModalUser}
     show={isShowModalUser}
+    action={actionModalUser}
+    dataModalUser={dataModalUser}
     />
     </>
   )
