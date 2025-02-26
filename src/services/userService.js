@@ -1,5 +1,6 @@
 // import axios from "axios"
 import axios from "../setup/axios"
+
 const registerNewUser =(email,phone,username,password)=>{
   return axios.post('/api/v1/register',{
     email,phone,username,password
@@ -27,4 +28,7 @@ const updateCurrentUser=(userData)=>{
   return axios.put('/api/v1/user/update',{...userData})
 
 }
-export {registerNewUser,loginUser,fetchAllUsers,deleteUser,fetchGroup,creatNewUser,updateCurrentUser};
+const getUserAccount=()=>{
+  return axios.get('/api/v1/account')
+}
+export {registerNewUser,loginUser,fetchAllUsers,deleteUser,fetchGroup,creatNewUser,updateCurrentUser,getUserAccount};

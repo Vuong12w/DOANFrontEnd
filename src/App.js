@@ -8,28 +8,38 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import _ from "lodash";
 import AppRoutes from './routes/AppRoute';
+import { Rings } from 'react-loader-spinner';
+import { UserContext } from './context/UserContext';
 function App() {
-  const [account,setAccount]=useState({})
-  useEffect(()=>{
-    let session = sessionStorage.getItem('account')
-   if(session){
-     setAccount(JSON.parse(session))
-   }
-  },[])
+  const {user}=useContext(UserContext)
   return (
     <>
     <Router>
+    {user && user.isLoading?
+    <div className='loading-container'>
+    <Rings
+     height="100"
+     width="100" 
+     color='#1877f2'
+      ariaLabel='loading
+      '/>
+      <div>Loading data...</div>
+      </div>
+      
+      :
+    <>
     <div className='app-header'>
        <Nav/>
     </div>
    <div className='app-container'>
-    {/* {account && !_.isEmpty(account) && account.isAuthenticated && <Nav/>} */}
-    {/* <Nav/> */}
     <AppRoutes/>
    </div>
+   </> }
+    
+   </Router>
    
    <ToastContainer
 position="top-right"
@@ -42,7 +52,6 @@ pauseOnFocusLoss
 draggable
 pauseOnHover
 />
- </Router>
   </>
   );
 }

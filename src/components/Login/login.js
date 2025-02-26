@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import './login.scss'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom'
 import { toast } from 'react-toastify'
 import { loginUser } from '../../services/userService'
+import { UserContext } from '../../context/UserContext'
 const Login =(props)=>{
+  const{loginContext}=useContext(UserContext)
   const [valueLogin,setValueLogin]=useState("")
   const [password,setPassword]=useState("")
   const defaultObjValidInput={
@@ -26,14 +28,18 @@ const Login =(props)=>{
     await loginUser(valueLogin,password)
      let response = await loginUser(valueLogin,password)
      if(response &&+response.EC ===0){
+      let groupWithRoles=response.DT.groupWithRoles
+      let email =response.DT.email
+      let username =response.DT.username
+      let token= response.DT.access_token
       let data ={
         isAuthenticated: true,
-        token: 'fake token'
+        token: token,
+        account:{groupWithRoles,email,username}
       }
-      sessionStorage.setItem('account',JSON.stringify(data))
+      
+      loginContext(data)
       history.push('/users')
-      window.location.reload()
-       toast.success(response.EM)
      }
      if(response&&response.data && +response.EC !==0){
       toast.error(response.EM)
@@ -49,13 +55,6 @@ const Login =(props)=>{
       handleLogin()
     }
   }
-  useEffect(()=>{
-    let session = sessionStorage.getItem('account')
-    if(session){
-      history.push("/")
-      window.location.reload()
-    }
-  },[])
   return(
     <div className="login-container mt-3">
       <div className="container">

@@ -50,7 +50,6 @@ const Users =(props)=>{
   }
   const confirmDeleteUser=async()=>{
     let respone = await deleteUser(dataModal)
-    console.log(respone)
     if(respone && respone.EC===0){
       toast.success(respone.EM)
       await fetchUsers()
