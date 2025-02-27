@@ -1,6 +1,6 @@
 
 import './App.scss';
-import Nav from './components/Navigation/Nav';
+import NavHeader from './components/Navigation/NavHeader';
 import {
   BrowserRouter as Router,
   Switch,
@@ -32,7 +32,7 @@ function App() {
       :
     <>
     <div className='app-header'>
-       <Nav/>
+       <NavHeader/>
     </div>
    <div className='app-container'>
     <AppRoutes/>
