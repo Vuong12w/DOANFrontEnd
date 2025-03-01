@@ -40,7 +40,7 @@ const NavHeader =(props)=>{
       <Container>
         <Navbar.Brand href="#home">
           <img
-          classNamena
+          
           src={logo}
           width="30"
           height="30"
